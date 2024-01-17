@@ -1,9 +1,11 @@
-#include "minitalk.h"
 #include "libft/libft.h"
-void handle_signal(int signal_msg)
+#include "minitalk.h"
+
+void	handle_signal(int signal_msg)
 {
-	static char c;
-	static char bit_counter;	
+	static char	c;
+	static char	bit_counter;
+
 	if (signal_msg == SIGUSR1)
 	{
 		bit_counter++;
@@ -11,25 +13,27 @@ void handle_signal(int signal_msg)
 	}
 	else if (signal_msg == SIGUSR2)
 	{
- 		c = c << 1;
+		c = c << 1;
 		bit_counter++;
 	}
-	if(bit_counter == 8)
+	if (bit_counter == 8)
 	{
 		ft_printf("%c", c);
 		c = 0;
 		bit_counter = 0;
 	}
-
 }
- int main()
- {
+int	main (int ac, char **av)
+{
+	(void)av;
+	if (ac != 1)
+		return (-1);
 	ft_printf("%d\n", getpid());
 	signal(SIGUSR1, handle_signal);
 	signal(SIGUSR2, handle_signal);
 
-	while(1)
+	while (1)
 	{
 		pause();
 	}
- }
+}

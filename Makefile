@@ -2,10 +2,16 @@ NAME = minitalk.a
 
 SRCS = \
 	server.c client.c
-	
+
+SRCS_BONUS = \
+	server_bonus.c client_bonus.c
+
 AR = ar rcs
 
 OBJ = $(SRCS:.c=.o)
+
+OBJ_BONUS = $(SRCS_BONUS:.c=.o)
+
 CC = cc
 
 CFLAGS = -Wall -Werror -Wextra
@@ -18,14 +24,22 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 all: $(NAME) server client
 
+bonus: $(NAME) server_bonus client_bonus
+
 $(NAME): $(OBJ) $(LIBFT)
 	$(AR) $(NAME) $(OBJ)
 
-server: $(SERVER_OBJ) $(LIBFT)
+server: $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) -o server server.o $(LIBFT)
 
-client: $(CLIENT_OBJ) $(LIBFT)
+client: $(OBJ) $(LIBFT)
 	$(CC) $(CFLAGS) -o client client.o $(LIBFT)
+
+server_bonus: $(OBJ_BONUS) $(LIBFT)
+	$(CC) $(CFLAGS) -o server_bonus server_bonus.o $(LIBFT)
+
+client_bonus: $(OBJ_BONUS) $(LIBFT)
+	$(CC) $(CFLAGS) -o client_bonus client_bonus.o $(LIBFT)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -34,13 +48,13 @@ $(LIBFT):
 	cd $(LIBFT_DIR) && $(MAKE)
 
 clean:
-	$(RM) $(OBJ) $(SERVER_OBJ) $(CLIENT_OBJ)
+	$(RM) $(OBJ) $(OBJ_BONUS)
 	cd $(LIBFT_DIR) && $(MAKE) clean
 
 fclean: clean
-	$(RM) $(NAME) server client
+	$(RM) $(NAME) server client server_bonus client_bonus
 	cd $(LIBFT_DIR) && $(MAKE) fclean
 	
 re: fclean all
 
-.PHONY: all server client clean fclean re
+.PHONY: all bonus server client server_bonus client_bonus clean fclean re
