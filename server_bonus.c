@@ -2,7 +2,7 @@
 
 int server = 0;
 
-void handlemessage(int sig)
+void handlemessage(int sigc)
    {
         (void)sig;
         server = 1;
