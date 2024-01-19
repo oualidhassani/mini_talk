@@ -2,57 +2,57 @@
 
 int server = 0;
 
-void handlemessage(int sigc)
+void handlemessage(int sig)
    {
-        (void)sig;
-        server = 1;
+        if(sig == SIGUSR1)
+            ft_printf("the server received the message from the client\n");
    }
-void	handle_signal(int signal_msg)
-{
-	static char	c;
-	static char	bit_counter;
+// void	handle_signal(int signal_msg)
+// {
+// 	static char	c;
+// 	static char	bit_counter;
 
-	if (signal_msg == SIGUSR1)
-	{
-		bit_counter++;
-		c = c << 1 | 1;
-	}
-	else if (signal_msg == SIGUSR2)
-	{
-		c = c << 1;
-		bit_counter++;
-	}
-	if (bit_counter == 8)
-	{
-		ft_printf("%c", c);
-        if (c == '\0')
-            handlemessage(signal_msg);
-		c = 0;
-		bit_counter = 0;
-	}
-}
+// 	if (signal_msg == SIGUSR1)
+// 	{
+// 		bit_counter++;
+// 		c = c << 1 | 1;
+// 	}
+// 	else if (signal_msg == SIGUSR2)
+// 	{
+// 		c = c << 1;
+// 		bit_counter++;
+// 	}
+// 	if (bit_counter == 8)
+// 	{
+// 		ft_printf("%c", c);
+//         if (c == '\0')
+//             handlemessage(signal_msg);
+// 		c = 0;
+// 		bit_counter = 0;
+// 	}
+// }
 
 int main(int ac, char **av)
 {
+    (void)ac;
     (void)av;
-    if(ac != 1)
-        return(-1);
-    ft_printf("%d\n", getpid());
-    signal(SIGUSR1, handle_signal);
-    signal(SIGUSR2, handle_signal);   
+    struct sigaction sa;
 
-    ft_printf("server waiting for the signal\n");
+    sa.sa_handler = &handlemessage;
+    sigemptyset(&sa.sa_mask);
+
+    if (sigaction(SIGUSR1, &sa, NULL) == -1)
+        ft_printf("ERROR\n");
 
     while(1)
     {
-        if (server != 0)
-        {
-            ft_printf("received a signal from the client\n");
-                kill(getpid(), SIGUSR2);
+        ft_printf("server is waiting\n");
+        sleep(1);
 
-            server = 0;
-            
-            sleep(1);
-        }
+        ft_printf("server sending a signal to the server\n");
+
+        kill(getpid(), SIGUSR1);
+        // pause();
+        
     }
 }
