@@ -6,6 +6,8 @@ static int	is_string_digit(char *str)
 	int	i;
 
 	i = 0;
+	if(str[0] == 0)
+		return(0);
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
@@ -39,12 +41,12 @@ void	client_function(pid_t id, char *str)
 }
 int	main(int ac, char **av)
 {
-	int server_pid = ft_atoi(av[1]);
+	if (ac != 3)
+		return (-1);
+	pid_t server_pid = ft_atoi(av[1]);
 	char *str = ft_strdup(av[2]);
 	if (is_string_digit(av[1]) == 0)
 	 	return (-1);
-	if (ac != 3)
-		return (-1);
 	if (!str)
 		free(str);
 	client_function(server_pid, str);

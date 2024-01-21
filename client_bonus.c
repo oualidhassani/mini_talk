@@ -1,83 +1,48 @@
 #include "minitalkbonus.h"
 
-// int client = 0;
-
-// static int	is_string_digit(char *str)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (str[i])
-// 	{
-// 		if (!ft_isdigit(str[i]))
-// 			return (0);
-// 		i++;
-// 	}
-// 	return (1);
-// }
-// void	client_function(pid_t id, char *str)
-// {
-// 	int	i;
-// 	int	j;
-
-// 	i = 0;
-// 	while (str[i])
-// 	{
-// 		j = 7;
-// 		while (j >= 0)
-// 		{
-// 			if (str[i] >> j & 1)
-// 			{
-// 				kill(id, SIGUSR1);
-// 			}
-// 			else
-// 				kill(id, SIGUSR2);
-// 			usleep(50);
-// 			j--;
-// 		}
-// 		i++;
-// 	}
-// }
-void handlemessage2(int sig)
+void	client_function(pid_t id, char *str)
 {
-    client = 0;
-    if (sig == SIGUSR1)
-        printf("client receive a message from the server\n");
-    // else if (sig == SIGUSR2)
-    //     exit(0);
+	int	i;
+	int	j;
+
+	i = 0;
+	while (str[i])
+	{
+		j = 7;
+		while (j >= 0)
+		{
+			if (str[i] >> j & 1)
+			{
+				kill(id, SIGUSR1);
+			}
+			else
+				kill(id, SIGUSR2);
+			usleep(50);
+			j--;
+		}
+		i++;
+	}
 }
-
-int main(int ac, char **av)
+void handler_client(int sig, siginfo_t *info, void *walo)
 {
-    (void)av;
-    (void)ac;
-    // char *str = ft_strdup(av[2]);
-    // int server_pid = ft_atoi(av[1]);
+	(void)walo; 
+    static pid_t id = info->si_pid;
 
-    // if(is_string_digit(av[1]) == 0)
-    //     printf("wrong id\n");
-    //     //return(-1);
-    // if(!str)
-    //     free(str);
-    // if (ac != 3)
-    // {
-    //     free(str);
-    //     ft_printf("ERROR\n");
-    //     exit(1);
-    // }
-
+    if(sig == SIGUSR1)
+        client_function(id, NULL);
+	kill(id, SIGUSR1);
+	if(sig == SIGUSR2)
+		exit(EXIT_SUCCESS);
+}
+int main ()
+{
     struct sigaction sa;
 
-    sa.sa_handler = &handlemessage2;
-    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = handler_client;
+    sa.sa_flags = SA_SIGINFO;
 
-    sigemptyset(&sa.sa_mask);
-
-    if (sigaction(SIGUSR1, &sa, NULL) == -1)
-        ft_printf("ERROR\n");
+    if(sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
+        return(-1);
     
-
-    ft_printf("client sendng a message to the server\n");
-
-    sleep(2);
+    
 }
