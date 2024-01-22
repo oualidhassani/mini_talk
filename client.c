@@ -43,12 +43,9 @@ int	main(int ac, char **av)
 {
 	if (ac != 3)
 		return (-1);
-	pid_t server_pid = ft_atoi(av[1]);
-	char *str = ft_strdup(av[2]);
+	pid_t server_pid;
 	if (is_string_digit(av[1]) == 0)
 	 	return (-1);
-	if (!str)
-		free(str);
-	client_function(server_pid, str);
-	// client_function(server_pid, "\n");
+	server_pid = ft_atoi(av[1]);
+	client_function(server_pid, av[2]);
 }

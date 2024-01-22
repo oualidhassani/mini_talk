@@ -1,5 +1,20 @@
 #include "minitalkbonus.h"
 
+static int	is_string_digit(char *str)
+{
+	int	i;
+
+	i = 0;
+	if(str[0] == 0)
+		return(0);
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 void	client_function(pid_t id, char *str)
 {
 	int	i;
@@ -22,27 +37,33 @@ void	client_function(pid_t id, char *str)
 		}
 		i++;
 	}
-}
-void handler_client(int sig, siginfo_t *info, void *walo)
-{
-	(void)walo; 
-    static pid_t id = info->si_pid;
-
-    if(sig == SIGUSR1)
-        client_function(id, NULL);
-	kill(id, SIGUSR1);
-	if(sig == SIGUSR2)
+	if(str[i] == '\0')
+	{
 		exit(EXIT_SUCCESS);
+	}
 }
-int main ()
+void	handler_client(int sig)
 {
-    struct sigaction sa;
+	if (sig == SIGUSR1)
+	 ft_printf("the message was received\n");
+	if (sig == SIGUSR2)
+		exit(0);
+}
+int	main(int ac, char **av)
+{
+	pid_t pid;
+	if (ac != 3)
+		return (-1);
+	if(is_string_digit(av[1]) ==  0)
+		return(-1);
 
-    sa.sa_sigaction = handler_client;
-    sa.sa_flags = SA_SIGINFO;
+	pid = ft_atoi(av[1]);
+	signal(SIGUSR1, handler_client);
+	signal(SIGUSR2, handler_client);
 
-    if(sigaction(SIGUSR1, &sa, NULL) == -1 || sigaction(SIGUSR2, &sa, NULL) == -1)
-        return(-1);
-    
-    
+	client_function(pid, av[2]);
+	while (1)
+	{
+		pause();
+	}
 }
