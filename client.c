@@ -48,4 +48,6 @@ int	main(int ac, char **av)
 	 	return (-1);
 	server_pid = ft_atoi(av[1]);
 	client_function(server_pid, av[2]);
+	
+	return(0);
 }

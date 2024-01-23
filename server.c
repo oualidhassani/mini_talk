@@ -23,11 +23,11 @@ void	handle_signal(int signal_msg)
 		bit_counter = 0;
 	}
 }
-int	main (int ac, char **av)
+int	main(int ac, char **av)
 {
+	if(ac != 1)
+		return(-1);
 	(void)av;
-	if (ac != 1)
-		return (-1);
 	ft_printf("%d\n", getpid());
 	signal(SIGUSR1, handle_signal);
 	signal(SIGUSR2, handle_signal);

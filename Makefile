@@ -1,60 +1,52 @@
-NAME = minitalk.a
+NAME_SERVER = server
+NAME_CLIENT = client
+NAME_SERVER_BONUS = server_bonus
+NAME_CLIENT_BONUS = client_bonus
 
-SRCS = \
-    server.c client.c
+SRCS_SERVER = server.c
+SRCS_CLIENT = client.c
+SRCS_SERVER_BONUS = server_bonus.c
+SRCS_CLIENT_BONUS = client_bonus.c
 
-SRCS_BONUS = \
-    server_bonus.c client_bonus.c
-
-AR = ar rcs
-
-OBJ = $(SRCS:.c=.o)
-
-OBJ_BONUS = $(SRCS_BONUS:.c=.o)
+OBJ_SERVER = $(SRCS_SERVER:.c=.o)
+OBJ_CLIENT = $(SRCS_CLIENT:.c=.o)
+OBJ_SERVER_BONUS = $(SRCS_SERVER_BONUS:.c=.o)
+OBJ_CLIENT_BONUS = $(SRCS_CLIENT_BONUS:.c=.o)
 
 CC = cc
-
 CFLAGS = -Wall -Werror -Wextra
-
 RM = rm -f
 
 LIBFT_DIR = libft
-
 LIBFT_TARGET = $(LIBFT_DIR)/libft.a
 
-all: libft $(NAME) server client
 
-bonus: libft $(NAME) server_bonus client_bonus
+all: libft $(NAME_SERVER) $(NAME_CLIENT)
 
-$(NAME): $(OBJ)
-	$(AR) $(NAME) $(OBJ)
+bonus: libft $(NAME_SERVER_BONUS) $(NAME_CLIENT_BONUS)
 
-server: $(OBJ)
-	$(CC) $(CFLAGS) -o server server.o $(LIBFT_TARGET)
+build: $(NAME_SERVER) $(NAME_CLIENT)
 
-client: $(OBJ)
-	$(CC) $(CFLAGS) -o client client.o $(LIBFT_TARGET)
+$(NAME_SERVER) $(NAME_CLIENT): % : %.o
+	$(CC) $(CFLAGS) -o $@ $< $(LIBFT_TARGET)
 
-server_bonus: $(OBJ_BONUS)
-	$(CC) $(CFLAGS) -o server_bonus server_bonus.o $(LIBFT_TARGET)
-
-client_bonus: $(OBJ_BONUS)
-	$(CC) $(CFLAGS) -o client_bonus client_bonus.o $(LIBFT_TARGET)
+$(NAME_SERVER_BONUS) $(NAME_CLIENT_BONUS): % : %.o
+	$(CC) $(CFLAGS) -o $@ $< $(LIBFT_TARGET)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@ -I $(LIBFT_DIR)
 
 libft:
-	cd $(LIBFT_DIR) && $(MAKE)
+	@cd $(LIBFT_DIR) && $(MAKE)
 
 clean:
-	$(RM) $(OBJ) $(OBJ_BONUS)
+	$(RM) $(OBJ_SERVER) $(OBJ_CLIENT) $(OBJ_SERVER_BONUS) $(OBJ_CLIENT_BONUS)
 	cd $(LIBFT_DIR) && $(MAKE) clean
 
 fclean: clean
-	$(RM) $(NAME) server client server_bonus client_bonus
+	$(RM) $(NAME_SERVER) $(NAME_CLIENT) $(NAME_SERVER_BONUS) $(NAME_CLIENT_BONUS)
 	cd $(LIBFT_DIR) && $(MAKE) fclean
 
 re: fclean all
 
-.PHONY: all bonus server client server_bonus client_bonus clean fclean re libft
+.PHONY: all bonus build clean fclean re libft

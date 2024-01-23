@@ -1,11 +1,10 @@
 #include "minitalkbonus.h"
 
-static char	c;
-static int	bit_count;
-
 void	handler_signal(int sig, siginfo_t *siginfo, void *walo)
 {
-	pid_t	client;
+	static char	c;
+	static int	bit_count;
+	pid_t		client;
 
 	(void)walo;
 	client = siginfo->si_pid;
@@ -29,8 +28,11 @@ void	handler_signal(int sig, siginfo_t *siginfo, void *walo)
 		bit_count = 0;
 	}
 }
-int	main(void)
+int	main(int ac, char **av)
 {
+	(void)av;
+	if (ac != 1)
+		return (-1);
 	struct sigaction sa;
 
 	sa.sa_sigaction = handler_signal;
