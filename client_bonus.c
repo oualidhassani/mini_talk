@@ -1,67 +1,69 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohassani <ohassani@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/24 09:33:38 by ohassani          #+#    #+#             */
+/*   Updated: 2024/01/24 10:11:11 by ohassani         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalkbonus.h"
 
-static int	is_string_digit(char *str)
+void	ft_send_bit(int pid, int sig)
+{
+	if (sig == 1)
+		sig = SIGUSR1;
+	else
+		sig = SIGUSR2;
+	if (kill(pid, sig) == -1)
+		exit(1);
+}
+
+void	ft_send_char(int pid, char c)
 {
 	int	i;
 
-	i = 0;
-	if(str[0] == 0)
-		return(0);
-	while (str[i])
+	i = 7;
+	while (i >= 0)
 	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
+		ft_send_bit(pid, (c >> i) & 1);
+		usleep(50);
+		i--;
 	}
-	return (1);
 }
-void	client_function(pid_t id, char *str)
-{
-	int	i;
-	int	j;
 
-	i = 0;
-	while (str[i])
-	{
-		j = 7;
-		while (j >= 0)
-		{
-			if (str[i] >> j & 1)
-			{
-				kill(id, SIGUSR1);
-			}
-			else
-				kill(id, SIGUSR2);
-			usleep(50);
-			j--;
-		}
-		i++;
-	}
-	if(str[i] == '\0')
-	{
-		exit(EXIT_SUCCESS);
-	}
+void	ft_send_string(int pid, char *str)
+{
+	while (*str)
+		ft_send_char(pid, *str++);
+	ft_send_char(pid, '\0');
 }
+
 void	handler_client(int sig)
 {
 	if (sig == SIGUSR1)
-	 ft_printf("the message was received\n");
-	if (sig == SIGUSR2)
-		exit(0);
+	{
+		ft_printf("the message was received\n");
+		exit(1);
+	}
+	
 }
+
 int	main(int ac, char **av)
 {
-	pid_t pid;
+	pid_t	pid;
+
 	if (ac != 3)
 		return (-1);
-	if(is_string_digit(av[1]) ==  0)
-		return(-1);
-
+	if (ft_is_string_digit(av[1]) == 0)
+		return (-1);
 	pid = ft_atoi(av[1]);
 	signal(SIGUSR1, handler_client);
 	signal(SIGUSR2, handler_client);
-
-	client_function(pid, av[2]);
+	ft_send_string(pid, av[2]);
 	while (1)
 	{
 		pause();

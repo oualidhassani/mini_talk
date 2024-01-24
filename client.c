@@ -1,21 +1,17 @@
-#include "libft/libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohassani <ohassani@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/24 10:00:54 by ohassani          #+#    #+#             */
+/*   Updated: 2024/01/24 10:09:41 by ohassani         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
-static int	is_string_digit(char *str)
-{
-	int	i;
-
-	i = 0;
-	if(str[0] == 0)
-		return(0);
-	while (str[i])
-	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
 void	client_function(pid_t id, char *str)
 {
 	int	i;
@@ -39,15 +35,16 @@ void	client_function(pid_t id, char *str)
 		i++;
 	}
 }
+
 int	main(int ac, char **av)
 {
+	pid_t	server_pid;
+
 	if (ac != 3)
 		return (-1);
-	pid_t server_pid;
-	if (is_string_digit(av[1]) == 0)
-	 	return (-1);
+	if (ft_is_string_digit(av[1]) == 0)
+		return (-1);
 	server_pid = ft_atoi(av[1]);
 	client_function(server_pid, av[2]);
-	
-	return(0);
+	return (0);
 }
