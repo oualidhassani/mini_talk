@@ -6,7 +6,7 @@
 /*   By: ohassani <ohassani@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 09:33:38 by ohassani          #+#    #+#             */
-/*   Updated: 2024/01/24 10:11:11 by ohassani         ###   ########.fr       */
+/*   Updated: 2024/01/26 09:27:13 by ohassani         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ void	handler_client(int sig)
 		ft_printf("the message was received\n");
 		exit(1);
 	}
-	
+	if (sig == SIGUSR2)
+		exit(0);
 }
 
 int	main(int ac, char **av)
